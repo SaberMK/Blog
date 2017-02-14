@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сайт</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div class="col-md-offset-2 col-md-8">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Навигация</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                @Html.ActionLink("Блог", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                <div class="navbar-collapse collapse">
+                    @Html.Partial("_LayoutPartialView")
+                </div>
+            </div>
+        </nav>
+        <div class="container body-content col-md-12">
+            <div class="container-fluid col-md-3">
+                <div class="row">
+                    <ul class="nav nav-tabs nav-stacked">
+                        <li>
+                            <a class="list-group-item" href="../../Blog/Feed">Новости</a>
+                        </li>
+                        <li>
+                            <a class="list-group-item" href="../../Blog/Best">Лучшие за всё время</a>
+                        </li>
+                        <li>
+                            <a class="list-group-item" href="../../Blog/Create">Высказаться</a>
+                        </li>
+                    </ul>
+               </div>  
+           </div>
+            <div class="container-fluid col-md-9">
+                @RenderBody();
+            </div>
+        </div>
+                    <div class="container body-content col-md-12">
+                        <hr />
+                        <footer>
+                            <p align="center">&copy; @DateTime.Now.Year - (c) Дмитрий Борисов</p>
+                        </footer>
+                    </div>
+
+                    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+                    <script src="~/Scripts/bootstrap.min.js"></script>
+                </div>
+</body>
+</html>

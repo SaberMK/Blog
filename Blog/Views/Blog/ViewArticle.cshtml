@@ -1,0 +1,94 @@
+﻿@model Blog.Models.Articles
+
+
+
+@if (Session["id"] != null)
+{
+<div>
+    <hr />
+    <div>
+        <p class="h5">
+            Автор:   <a href="@String.Format("../../../User/Info/{0}", Model.AuthorId)">@ViewBag.AuthorName   </a>&nbsp;&nbsp;&nbsp;&nbsp;
+            Дата: @Model.DateTime.Day.@Model.DateTime.Month.@Model.DateTime.Year
+        </p>
+        <br />
+        <p class="h3">
+            @Model.Title
+        </p>
+        <p>
+            @Html.Raw(Model.Content)
+        </p>
+
+        <hr />
+        <div class="text-left">
+            @foreach(var t in ViewBag.Tags)
+            {
+                <a class="label label-default" href="@string.Format("../../../Blog/Tag/{0}/1",t.TagId)">@t.Tag</a>
+            }
+        </div>
+        <div class="text-right">
+            @if (!ViewBag.IsMarked)
+            {
+                <a class="label label-success" href="@string.Format("../../../Blog/Rate/{0}/1", Model.ArticleId)">Like</a>
+            }
+            @if (ViewBag.Rating > 0)
+            {
+                <p class="label label-success">+@ViewBag.Rating</p>
+            }
+            else if (ViewBag.Rating < 0)
+            {
+                <p class="label label-danger">@ViewBag.Rating</p>
+            }
+            else
+            {
+                <p class="label label-warning">@ViewBag.Rating</p>
+            }
+
+            @if (!ViewBag.IsMarked)
+            {
+                <a class="label label-danger" href="@string.Format("../../../Blog/Rate/{0}/0", Model.ArticleId)">Dislike</a>
+            }
+        </div>
+    </div>
+    <hr />
+    @if (ViewBag.Comments.Count > 0)
+    {
+    <h3>Комментарии:</h3>
+    }
+    <hr />
+    @foreach(var comment in ViewBag.Comments)
+    {
+        <div class="col-md-12 thumbnail">
+            <div class="left">
+                <a href="@string.Format("../../../User/Info/{0}",comment.AuthorId)">@ViewBag.Authors[comment.AuthorId]</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                @comment.DateTime.Day.@comment.DateTime.Month.@comment.DateTime.Year &nbsp;&nbsp;&nbsp;@comment.DateTime.Hour.@comment.DateTime.Minute
+            </div>
+            <br />
+            <p>
+                @comment.Content
+            </p>
+        </div>
+    }
+    <hr />
+    <div class="text-right">
+        @if (ViewBag.Param > 1)
+        {
+            <a class="label label-default" href="@string.Format("../../../Blog/ViewArticle/{0}/{1}", ViewBag.Id,ViewBag.Param - 1)">Назад</a>
+        }
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        @if (ViewBag.Comments.Count == 10)
+        {
+            <a class="label label-default" href="@string.Format("../../../Blog/ViewArticle/{0}/{1}", ViewBag.Id,ViewBag.Param + 1)">Вперед</a>
+        }
+    </div>
+
+    <a href="../../../Blog/AddComment" class="btn"><h3>Добавить комментарий</h3></a>
+</div>
+}
+else
+{
+    <div>
+        Необходимо выполнить вход или регистрацию
+    </div>
+}

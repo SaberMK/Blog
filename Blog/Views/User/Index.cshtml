@@ -1,0 +1,13 @@
+﻿@model IEnumerable<Blog.Models.Users>
+<h2>Список пользователей:</h2>
+<table class="table table-condensed">
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.Login, "Info", new { id = item.UserId })
+            </td>
+        </tr>
+    }
+
+</table>
