@@ -14,6 +14,88 @@ namespace Blog.Controllers
             return View();
         }
 
+        [HttpGet]
+        [ValidateInput(false)] //Сам проверю
+        public ActionResult Modify(int? id)
+        {
+            if (Session["id"] != null)
+            {
+                if (id.Value != int.Parse(Session["id"].ToString()))
+                {
+                    ViewBag.IsAccessDenied = true;
+                }
+                else
+                {
+                    ViewBag.IsAccessDenied = false;
+                }
+                var db = new BlogModelDataContext();
+                int articleId = int.Parse(Session["modArticle"].ToString());
+                Articles articleInDB = db.Articles.SingleOrDefault(x => x.ArticleId == articleId);
+                BlogViewModel bvm = new BlogViewModel();
+                bvm.Content = articleInDB.Content.Replace("<br />", "\n");
+                bvm.Title = articleInDB.Title;
+
+                //С тегами все несколько сложнее
+                var tagsAndArticles = db.TagsAndArticles.Where(x => x.ArticleId == articleId);
+                var tags = new List<string>();
+                foreach (var tagAndArticle in tagsAndArticles)
+                {
+                    tags.Add(db.Tags.SingleOrDefault(x => x.TagId == tagAndArticle.TagId).Tag);
+                }
+                tags.ForEach(x => bvm.Tags = bvm.Tags + " #" + x);
+                return View(bvm);
+            }
+            return RedirectToAction("Index", "User");
+        }
+        [HttpPost]
+        [ValidateInput(false)] //Сам проверю
+        public ActionResult Modify(BlogViewModel article)
+        {
+            var db = new BlogModelDataContext();
+            int articleId = int.Parse(Session["modArticle"].ToString());
+            Articles articleInDB = db.Articles.SingleOrDefault(x => x.ArticleId == articleId);
+            
+            articleInDB.Title = ValidData(article.Title);
+            articleInDB.Content = ValidData(article.Content.Replace("\r\n","<br />"));
+            articleInDB.DateTime = DateTime.Now;
+            db.SubmitChanges();
+            //Удаляем старые теги
+            var tagsForDelete = db.TagsAndArticles.Where(x => x.ArticleId == articleId);
+            db.TagsAndArticles.DeleteAllOnSubmit(tagsForDelete);
+
+            article.Tags = ValidTags(article.Tags);
+
+            //Работаем с новыми
+            if (article.Tags != null)
+            {
+                string[] separatedTags = article.Tags.Split(new char[] { ' ', '#', ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                List<int> tagIds = new List<int>();
+                foreach (var separatedtag in separatedTags)
+                {
+                    if (db.Tags.Count(x => x.Tag == separatedtag) == 0)
+                    {
+                        Tags t = new Tags() { Tag = separatedtag };
+                        db.Tags.InsertOnSubmit(t);
+                        db.SubmitChanges();
+                        tagIds.Add(t.TagId);
+                    }
+                    else
+                    {
+                        tagIds.Add(db.Tags.SingleOrDefault(x => x.Tag == separatedtag).TagId);
+                    }
+                }
+                db.SubmitChanges();
+
+                foreach (var tagId in tagIds)
+                {
+                    db.TagsAndArticles.InsertOnSubmit(new TagsAndArticles() { ArticleId = articleId, TagId = tagId });
+                }
+            }
+            db.SubmitChanges();
+            return RedirectToAction("SuccessBlogCreate", "Blog");
+        }
+
 
         #region Create(создание блога)
         [HttpGet]
@@ -34,13 +116,15 @@ namespace Blog.Controllers
 
                 int id = int.Parse(Session["id"].ToString());
                 Articles article = new Articles();
-                article.Title = bvm.Title;
-                article.Content = GetHtmlString(bvm.Content);
+                article.Title = ValidData(bvm.Title);
+                article.Content = ValidData(GetHtmlString(bvm.Content));
                 //article.Content = bvm.Content;
                 article.AuthorId = id;
                 article.DateTime = DateTime.Now;
                 db.Articles.InsertOnSubmit(article);
                 db.SubmitChanges();
+                bvm.Tags = ValidTags(bvm.Tags);
+                //Работа с тегами
                 if (bvm.Tags != null)
                 {
                     string[] separatedTags = bvm.Tags.Split(new char[] { ' ', '#', ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -52,7 +136,7 @@ namespace Blog.Controllers
                         {
                             Tags t = new Tags() { Tag = separatedtag };
                             db.Tags.InsertOnSubmit(t);
-                            db.SubmitChanges(); //TODO потом повыносить в отдельный лист такие добавленные тэги
+                            db.SubmitChanges();
                             tagIds.Add(t.TagId);
                         }
                         else
@@ -84,6 +168,27 @@ namespace Blog.Controllers
         }
         #endregion
          
+        string ValidData(string input)
+        {
+            input = input.Replace("&lg;", "<");
+            input = input.Replace("<sc", "");
+            input = input.Replace("<lin", "");
+            input = input.Replace("noscript>", "");
+            input = input.Replace("<?", ""); //для тех кто не теряет надежд
+            return input;
+        }
+        string ValidTags(string tags)
+        {
+            for(int i=0;i<tags.Length;++i)
+            {
+                if(!(tags[i] == ',' || tags[i] == ' ' ||tags[i]=='#' || (char.IsLetterOrDigit(tags[i]))))
+                {
+                    return "";
+                }
+            }
+            return tags;
+        }
+
         [HttpGet]
         public ActionResult AddComment()
         {
@@ -147,6 +252,10 @@ namespace Blog.Controllers
 
         public ActionResult ViewArticle(int? id,int? param)
         {
+            if(Session["id"]==null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
             if (id.HasValue == false)
                 RedirectToAction("WrongId", "Blog");
             else
@@ -155,10 +264,18 @@ namespace Blog.Controllers
                     param = 1;
                 var db = new BlogModelDataContext();
                 var article = db.Articles.Single(x => x.ArticleId == id.Value);
+
+               
                 ViewBag.AuthorName = db.Users.Single(x => x.UserId == article.AuthorId).Login;
-
+                
+                //Автор ли статьи текущий пользователь?
+                ViewBag.IsAuthor = article.AuthorId == int.Parse(Session["id"].ToString());
+                if(ViewBag.IsAuthor)
+                {
+                    Session["modArticle"] = article.ArticleId;
+                    ViewBag.ArticleId = article.ArticleId;
+                }
                 //Подгружаем теги
-
                 List<Tags> tags = new List<Tags>();
                 foreach(var t in article.TagsAndArticles)
                 {
@@ -191,6 +308,7 @@ namespace Blog.Controllers
                         bool isLike = db.Ratings.Single(x => x.ArticleId == id.Value && x.AuthorId == userId).Amount == 1;
                         ViewBag.IsLike = isLike;
                     }
+
                     //Если нормально всё отобразилось, то запоминаем статью
                     Session["lastArticleId"] = id;
                     ViewBag.Id = id;

@@ -4,11 +4,11 @@
     ViewBag.Title = "Index";
 }
 <div>
-    <h4>Информация о пользователе @Model.Email</h4>
+    <h4>Информация о пользователе @Model.Login</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Email)
+            <b>Email</b>
         </dt>
 
         <dd>
@@ -16,7 +16,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Login)
+            <b>Логин</b>
         </dt>
 
         <dd>
@@ -24,23 +24,15 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Password)
+            <b>Дата рождения</b>
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Password)
+            @Model.BirthDate.Day.@Model.BirthDate.Month.@Model.BirthDate.Year
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.BirthDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.BirthDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.About)
+            <b>О пользователе:</b>
         </dt>
 
         <dd>
@@ -49,7 +41,3 @@
 
     </dl>
 </div>
-<p>
-    @*@Html.ActionLink("Edit", "Edit", new { id = Model.UserId }) |
-    @Html.ActionLink("Back to List", "Index")*@
-</p>

@@ -23,5 +23,7 @@ namespace Blog.Models
 
         [Required(ErrorMessage = "Укажите свою дату рождения")]
         public DateTime BirthDate { get; set; }
+
+        public string About { get; set; }
     }
 }

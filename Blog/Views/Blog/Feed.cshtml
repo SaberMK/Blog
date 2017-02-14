@@ -9,7 +9,7 @@
     foreach (var item in Model)
     {
         <h4>
-            <a href="@string.Format("../../Blog/ViewArticle/{0}",item.ArticleId)">
+            <a href="@string.Format("../../../Blog/ViewArticle/{0}",item.ArticleId)">
                     @item.Title
             </a>
         </h4>
@@ -18,12 +18,12 @@
     <div class="text-right">
         @if (ViewBag.id > 1)
         {
-        <a class="label label-default" href="@string.Format("../../Blog/Feed/{0}", ViewBag.id - 1)">Назад</a>
+        <a class="label label-default" href="@string.Format("../../../Blog/Feed/{0}", ViewBag.id - 1)">Назад</a>
         }
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         @if (Model.Count() == 10)
         {
-            <a class="label label-default" href="@string.Format("../../Blog/Feed/{0}", ViewBag.id + 1)">Вперед</a>
+            <a class="label label-default" href="@string.Format("../../../Blog/Feed/{0}", ViewBag.id + 1)">Вперед</a>
         }
     </div>
 }

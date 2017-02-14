@@ -10,6 +10,10 @@
         <p class="h5">
             Автор:   <a href="@String.Format("../../../User/Info/{0}", Model.AuthorId)">@ViewBag.AuthorName   </a>&nbsp;&nbsp;&nbsp;&nbsp;
             Дата: @Model.DateTime.Day.@Model.DateTime.Month.@Model.DateTime.Year
+            @if(ViewBag.IsAuthor == true)
+            {
+                <a class="label label-default" href="@string.Format("../../../Blog/Modify/{0}",Model.ArticleId)">Изменить статью</a>
+            }
         </p>
         <br />
         <p class="h3">

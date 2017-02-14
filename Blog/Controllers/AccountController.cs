@@ -39,7 +39,7 @@ namespace Blog.Controllers
                     user.Password = rvm.Password;
                     user.Login = rvm.Login;
                     user.BirthDate = rvm.BirthDate;
-
+                    user.About = rvm.About ?? "";
                     db.Users.InsertOnSubmit(user);
                     db.SubmitChanges();
 

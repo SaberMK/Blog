@@ -162,6 +162,7 @@
     <Content Include="Views\Blog\Tag.cshtml" />
     <Content Include="Views\Blog\Best.cshtml" />
     <Content Include="Views\Blog\AddComment.cshtml" />
+    <Content Include="Views\Blog\Modify.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
