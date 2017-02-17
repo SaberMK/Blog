@@ -1,7 +1,4 @@
-﻿@{
-    ViewBag.Title = "Rate";
-}
-<h2>@ViewBag.Message</h2><br />
+﻿<h2>@ViewBag.Message</h2><br />
 @if(ViewBag.IsSuccess)
 {
     @Html.ActionLink("Вернуться к статье", "ViewArticle", "Blog", new { id = ViewBag.ArticleId},null)

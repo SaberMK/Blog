@@ -8,7 +8,7 @@
 
 Использованный DAL: LINQ2SQL
 
-Frontend: Twitter Bootstrap v3.0.0. + JQuery v
+Frontend: Twitter Bootstrap v3.0.0. + JQuery
 
 Backend: ASP.NET MVC 4
 

@@ -18,7 +18,7 @@ namespace Blog.Models
         public string Password { get; set; }
 
         [Required(ErrorMessage = "Повторите ввод пароля")]
-        [Compare("Password")]
+        [Compare("Password",ErrorMessage ="Пароли не совпадают")]
         public string PasswordConfirmation { get; set; }
 
         [Required(ErrorMessage = "Укажите свою дату рождения")]

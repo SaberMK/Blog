@@ -18,9 +18,12 @@ namespace Blog.Controllers
         {
             if (id.HasValue)
             {
-                Users usr = new BlogModelDataContext().Users.SingleOrDefault(x => x.UserId == id.Value);
+                var db = new BlogModelDataContext();
+                Users usr = db.Users.SingleOrDefault(x => x.UserId == id.Value);
                 if (usr == null)
                     return RedirectToAction("UserNotFound", "User");
+                var blogs = db.Articles.Where(x => x.AuthorId == usr.UserId).ToList();
+                ViewBag.Blogs = blogs;
                 return View(usr);
             }
             return RedirectToAction("UserNotFound", "User");

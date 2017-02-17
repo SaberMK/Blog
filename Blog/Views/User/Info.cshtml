@@ -1,8 +1,4 @@
 ﻿@model Blog.Models.Users
-
-@{
-    ViewBag.Title = "Index";
-}
 <div>
     <h4>Информация о пользователе @Model.Login</h4>
     <hr />
@@ -41,3 +37,21 @@
 
     </dl>
 </div>
+@if (ViewBag.Blogs.Count != 0)
+{
+    <p class="h4">Статьи автора:</p>
+    foreach (var item in ViewBag.Blogs)
+    {
+        <div class="col-md-12">
+            <h4>
+                <a href="@string.Format("../../../Blog/ViewArticle/{0}",item.ArticleId)">
+                    @item.Title
+                </a>
+            </h4>
+        </div>
+    }
+}
+else
+{
+    <p class="h4">Пользователь ещё не делал заметок в своем блоге</p>
+}
